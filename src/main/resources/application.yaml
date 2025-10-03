@@ -1,0 +1,22 @@
+server:
+  port: 8089
+  servlet:
+    context-path: /payment
+
+spring:
+  application:
+    name: payment-service
+  data:
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://root:root@mongodb:27017/payment_db?authSource=admin}  # T?t, ?u tiên ENV var
+  # VNPAY Sandbox Config (ph?i indent d??i spring:)
+vnpay:
+  tmnCode: VRIAH5CW
+  hashSecret: 0GX6EJ0RU7DA1GQDRAJTN6JLSK50NWD9  # Thay b?ng secret th?t
+  payUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+  returnUrl: http://localhost:8089/payment/vn-pay-callback  # C?p nh?t path v?i context-path m?i
+  ipnUrl: https://your-domain.com/api/payment/vnpay-ipn
+  apiUrl: https://sandbox.vnpayment.vn/merchant_webapi/api/transaction
+  orderType: orther
+  command: pay
+  version: 2.1.0
