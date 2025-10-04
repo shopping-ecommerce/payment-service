@@ -19,7 +19,13 @@ public class VNPayServiceImpl implements VNPayService {
     public String createPaymentURL(HttpServletRequest request) {
         long amount = Long.parseLong(request.getParameter("amount")) * 100; // multiply by 100 to convert to smallest currency unit
         String bankCode = request.getParameter("bankCode");
+        String userId = request.getParameter("userId"); // Get userId from request
+        String txnRef = request.getParameter("orderId") +":"+VNPayUtil.getRandomNumber(4); // Unique transaction reference
+        String orderInfo = "Thanh toan don hang:" + userId + ":" + txnRef;
+
         Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();
+        vnpParamsMap.put("vnp_TxnRef", userId + "-" + txnRef); // Format: userId-randomNumber
+        vnpParamsMap.put("vnp_OrderInfo", orderInfo);
         vnpParamsMap.put("vnp_Amount", String.valueOf(amount));
         if (bankCode != null && !bankCode.isEmpty()) {
             vnpParamsMap.put("vnp_BankCode", bankCode);
