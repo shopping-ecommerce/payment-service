@@ -6,15 +6,20 @@ server:
 spring:
   application:
     name: payment-service
-  data:
-    mongodb:
-      uri: ${SPRING_DATA_MONGODB_URI:mongodb://root:root@mongodb:27017/payment_db?authSource=admin}  # T?t, ?u tiên ENV var
-  # VNPAY Sandbox Config (ph?i indent d??i spring:)
+  datasource:
+    url: ${DBMS_CONNECTION:jdbc:mariadb://mariadb:3306/payment_db}
+    driver-class-name: "org.mariadb.jdbc.Driver"
+    username: ${DBMS_USERNAME:root}
+    password: ${DBMS_PASSWORD:sapassword}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
 vnpay:
   tmnCode: VRIAH5CW
-  hashSecret: 0GX6EJ0RU7DA1GQDRAJTN6JLSK50NWD9  # Thay b?ng secret th?t
+  hashSecret: 0GX6EJ0RU7DA1GQDRAJTN6JLSK50NWD9
   payUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
-  returnUrl: http://localhost:8089/payment/vn-pay-callback  # C?p nh?t path v?i context-path m?i
+  returnUrl: http://localhost:8089/payment/vn-pay-callback
   ipnUrl: https://your-domain.com/api/payment/vnpay-ipn
   apiUrl: https://sandbox.vnpayment.vn/merchant_webapi/api/transaction
   orderType: orther
