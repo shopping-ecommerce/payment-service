@@ -15,9 +15,22 @@ RUN mvn spotless:apply && mvn package -DskipTests
 # Start with Amazon Correto JDK 21
 FROM amazoncorretto:21.0.4
 
-# Set working folder to App and copy complied file from above step
+# ✅ Install tzdata and set timezone to Asia/Ho_Chi_Minh (GMT+7)
+RUN yum install -y tzdata && \
+    ln -sf /usr/share/zoneinfo/Asia/Ho_Chi_Minh /etc/localtime && \
+    echo "Asia/Ho_Chi_Minh" > /etc/timezone && \
+    yum clean all
+
+# Set working folder to App and copy compiled file from above step
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
-# Command to run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Expose port
+EXPOSE 8089
+
+# Command to run the application with timezone setting
+ENTRYPOINT ["java", \
+    "-Duser.timezone=Asia/Ho_Chi_Minh", \
+    "-Djava.security.egd=file:/dev/./urandom", \
+    "-jar", \
+    "app.jar"]
