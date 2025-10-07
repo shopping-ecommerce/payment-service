@@ -86,23 +86,25 @@ public class VNPayController {
             depositRequest.setDescription("Nạp tiền qua VNPay - " + txnRef);
 
             walletService.deposit(userId, depositRequest);
-            String redirectUrl = String.format(
-                    "http://localhost:3000/payment/result?status=success&txnRef=%s&amount=%s&orderInfo=%s&transactionNo=%s&bankCode=%s",
-                    txnRef,
-                    Long.parseLong(amount) / 100, // Convert về VND
-                    URLEncoder.encode(orderInfo, StandardCharsets.UTF_8),
-                    transactionNo,
-                    bankCode
-            );
+//            String redirectUrl = String.format(
+//                    "http://localhost:3000/payment/result?status=success&txnRef=%s&amount=%s&orderInfo=%s&transactionNo=%s&bankCode=%s",
+//                    txnRef,
+//                    Long.parseLong(amount) / 100, // Convert về VND
+//                    URLEncoder.encode(orderInfo, StandardCharsets.UTF_8),
+//                    transactionNo,
+//                    bankCode
+//            );
+            String redirectUrl = "http://localhost:5173/order-success";
             response.sendRedirect(redirectUrl);
         } else {
             // ❌ Thanh toán thất bại
-            String redirectUrl = String.format(
-                    "http://localhost:3000/payment/result?status=failed&code=%s&message=%s&txnRef=%s",
-                    status,
-                    URLEncoder.encode(getErrorMessage(status), StandardCharsets.UTF_8),
-                    txnRef
-            );
+//            String redirectUrl = String.format(
+//                    "http://localhost:3000/payment/result?status=failed&code=%s&message=%s&txnRef=%s",
+//                    status,
+//                    URLEncoder.encode(getErrorMessage(status), StandardCharsets.UTF_8),
+//                    txnRef
+//            );
+            String redirectUrl = "http://localhost:5173/order-failed";
             response.sendRedirect(redirectUrl);
         }
     }
