@@ -79,6 +79,7 @@ public class WalletServiceImpl implements WalletService {
         transaction.setAmount(request.getAmount());
         transaction.setDescription(request.getDescription());
         transaction.setType(TransactionType.DEPOSIT);
+        transaction.setStatus(Status.APPROVED);
         transactionRepository.save(transaction);
 
         log.info("Deposit successful for user: {}, amount: {}", userId, request.getAmount());
