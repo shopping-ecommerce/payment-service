@@ -77,7 +77,7 @@ public class VNPayController {
             String userId = extractUserIdFromOrderInfo(orderInfo);
 
             // TODO: Cập nhật trạng thái đơn hàng vào DB ở đây
-            BigDecimal depositAmount = new BigDecimal("100000");  // Full amount
+            BigDecimal depositAmount = new BigDecimal(amount).divide(new BigDecimal("100"), RoundingMode.DOWN); // Convert to main unit
             BigDecimal commissionRate = new BigDecimal("0.08");
             BigDecimal commission = depositAmount.multiply(commissionRate).setScale(0, RoundingMode.DOWN);  // 8000
             BigDecimal realDepositAmount = depositAmount.subtract(commission);  // 92000// Convert from smallest unit
