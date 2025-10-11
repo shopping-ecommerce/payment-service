@@ -3,6 +3,7 @@ package iuh.fit.se.dto.request;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
+@Builder
 @AllArgsConstructor
 public class DepositRequest {
     @NotNull(message = "Amount is required")
