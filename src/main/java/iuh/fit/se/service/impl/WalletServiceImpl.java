@@ -110,13 +110,13 @@ public class WalletServiceImpl implements WalletService {
         withdrawRequest.setStatus(Status.PENDING);
         withdrawRequestRepository.save(withdrawRequest);
 
-        // Create transaction record
-        Transaction transaction = new Transaction();
-        transaction.setWallet(wallet);
-        transaction.setAmount(request.getAmount());
-        transaction.setDescription("Withdraw to " + request.getBankName());
-        transaction.setType(TransactionType.WITHDRAW);
-        transactionRepository.save(transaction);
+//        // Create transaction record
+//        Transaction transaction = new Transaction();
+//        transaction.setWallet(wallet);
+//        transaction.setAmount(request.getAmount());
+//        transaction.setDescription("Withdraw to " + request.getBankName());
+//        transaction.setType(TransactionType.WITHDRAW);
+//        transactionRepository.save(transaction);
 
         log.info("Withdraw request created for user: {}, amount: {}", userId, request.getAmount());
     }

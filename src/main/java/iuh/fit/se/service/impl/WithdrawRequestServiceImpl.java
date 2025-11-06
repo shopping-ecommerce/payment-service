@@ -51,6 +51,15 @@ public class WithdrawRequestServiceImpl implements WithdrawRequestService {
         if (!Status.PENDING.equals(request.getStatus())) {
             throw new IllegalStateException("Only pending requests can be approved");
         }
+        Wallet wallet = walletRepository.findByUserId(request.getUserId())
+                .orElseThrow(() -> new AppException(ErrorCode.WALLET_NOT_FOUND));
+        Transaction transaction = new Transaction();
+        transaction.setWallet(wallet);
+        transaction.setAmount(request.getAmount());
+        transaction.setDescription("Rút tiền thành công cho yêu cầu rút tiền: " + id);
+        transaction.setType(TransactionType.WITHDRAW);
+        transaction.setStatus(Status.APPROVED);
+        transactionRepository.save(transaction);
 
         // Update request status
         request.setStatus(Status.APPROVED);
