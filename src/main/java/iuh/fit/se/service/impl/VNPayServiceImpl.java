@@ -39,4 +39,29 @@ public class VNPayServiceImpl implements VNPayService {
         String paymentUrl = vnPayConfig.getVnp_PayUrl() + "?" + queryUrl;
         return paymentUrl;
     }
+
+    @Override
+    public String createPaymenMarketingURL(HttpServletRequest request) {
+        long amount = Long.parseLong(request.getParameter("amount")) * 100; // multiply by 100 to convert to smallest currency unit
+        String bankCode = request.getParameter("bankCode");
+        String userId = request.getParameter("userId"); // Get userId from request
+        String txnRef = VNPayUtil.getRandomNumber(7); // Unique transaction reference
+        String orderInfo = "Thanh toan marketing:" + userId + ":" + txnRef;
+
+        Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();
+        vnpParamsMap.put("vnp_TxnRef", userId + "-" + txnRef); // Format: userId-randomNumber
+        vnpParamsMap.put("vnp_OrderInfo", orderInfo);
+        vnpParamsMap.put("vnp_Amount", String.valueOf(amount));
+        if (bankCode != null && !bankCode.isEmpty()) {
+            vnpParamsMap.put("vnp_BankCode", bankCode);
+        }
+        vnpParamsMap.put("vnp_IpAddr", VNPayUtil.getIpAddress(request));
+        //build query url
+        String queryUrl = VNPayUtil.getPaymentURL(vnpParamsMap, true);
+        String hashData = VNPayUtil.getPaymentURL(vnpParamsMap, false);
+        String vnpSecureHash = VNPayUtil.hmacSHA512(vnPayConfig.getSecretKey(), hashData);
+        queryUrl += "&vnp_SecureHash=" + vnpSecureHash;
+        String paymentUrl = vnPayConfig.getVnp_PayUrl() + "?" + queryUrl;
+        return paymentUrl;
+    }
 }

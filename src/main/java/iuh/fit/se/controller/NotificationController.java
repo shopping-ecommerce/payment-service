@@ -19,13 +19,21 @@ public class NotificationController {
 
     @KafkaListener(topics = "order-updated", groupId = "payment-service-group", concurrency = "1")
     public void handleOrderStatusChangedEvent(OrderStatusChangedEvent event) {
-        log.info("Nhận được sự kiện order-updated cho orderId: {}", event.getOrderId());
+        log.info("Nhận được sự kiện order-updated cho orderId: {}", event.toString());
         try {
-            walletService.deposit(event.getUserId(), DepositRequest.builder()
-                            .amount(event.getSubtotal())
-                            .description("Hoàn tiền cho đơn hàng: #" + event.getOrderId())
-                    .build());
-            log.info("Đã xử lý hoàn tiền cho đơn hàng: {}", event.getOrderId());
+            if ("DELIVERED".equals(event.getStatus())) {
+                walletService.deposit(event.getSellerId(), DepositRequest.builder()
+                        .amount(event.getTotalAmount())
+                        .description("Hoàn tiền thưởng cho đơn hàng: #" + event.getOrderId())
+                        .build());
+                log.info("Đã xử lý hoàn tiền thưởng cho đơn hàng: {}", event.getOrderId());
+            } else if ("CANCELLED".equals(event.getStatus()) && "BANK_TRANSFER".equals(event.getPaymentMethod())) {
+                walletService.deposit(event.getUserId(), DepositRequest.builder()
+                        .amount(event.getSubtotal())
+                        .description("Hoàn tiền cho đơn hàng: #" + event.getOrderId())
+                        .build());
+                log.info("Đã xử lý hoàn tiền cho đơn hàng: {}", event.getOrderId());
+            }
         } catch (Exception e) {
             log.error("Lỗi khi hoàn tiền cho đơn hàng {}: {}", event.getOrderId(), e.getMessage());
         }
@@ -35,6 +43,10 @@ public class NotificationController {
     public void handleUserCancelChangedEvent(OrderStatusChangedEvent event) {
         log.info("Nhận được sự kiện user-cancel-order cho orderId: {}", event.getOrderId());
         try {
+            if (!"BANK_TRANSFER".equals(event.getPaymentMethod())) {
+                log.info("Trạng thái đơn hàng không phải BANK_TRANSFER, không thực hiện hoàn tiền cho đơn hàng: {}", event.getOrderId());
+                return;
+            }
             walletService.deposit(event.getUserId(), DepositRequest.builder()
                     .amount(event.getSubtotal())
                     .description("Hoàn tiền cho đơn hàng: #" + event.getOrderId())

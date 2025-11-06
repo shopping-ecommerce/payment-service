@@ -22,14 +22,14 @@ public class OrderStatusChangedEvent {
     BigDecimal shippingFee;
     BigDecimal discountAmount;
     BigDecimal totalAmount;
-
     String voucherCode;
+
     String status;
     String recipientName;
     String phoneNumber;
     String shippingAddress;
     String reason;
     LocalDateTime createdAt;
-
+    String paymentMethod;
     List<OrderItemPayload> items;
 }

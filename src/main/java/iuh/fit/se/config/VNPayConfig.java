@@ -2,6 +2,7 @@ package iuh.fit.se.config;
 
 import iuh.fit.se.util.VNPayUtil;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,6 +18,7 @@ public class VNPayConfig {
     @Value("${vnpay.payUrl}")
     private String vnp_PayUrl;
     @Value("${vnpay.returnUrl}")
+    @Setter
     private String vnp_ReturnUrl;
     @Value("${vnpay.tmnCode}")
     private String vnp_TmnCode ;
