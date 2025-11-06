@@ -7,7 +7,7 @@ spring:
   application:
     name: payment-service
   kafka:
-    bootstrap-servers: ${DBKK_CONNECTION:kafka}:9094
+    bootstrap-servers: ${DBKK_CONNECTION:}:9094
     consumer:
       group-id: payment-group
       auto-offset-reset: earliest
@@ -24,6 +24,17 @@ spring:
       maximum-pool-size: 10
       minimum-idle: 5
       connection-timeout: 30000
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connect-timeout: 60000
+            read-timeout: 120000
+          policy-service:
+            url: ${POLICY_URL:}
+            connect-timeout: 30000
+            read-timeout: 60000
   jpa:
     hibernate:
       ddl-auto: update
