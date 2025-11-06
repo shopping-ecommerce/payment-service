@@ -4,4 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public interface VNPayService {
     String createPaymentURL(HttpServletRequest request);
+
+    String createPaymenMarketingURL(HttpServletRequest request);
 }
