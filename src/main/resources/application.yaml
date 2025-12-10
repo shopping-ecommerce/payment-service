@@ -58,3 +58,7 @@ vnpay:
   orderType: ${VNPAY_ORDER_TYPE:other}
   command: ${VNPAY_COMMAND:pay}
   version: ${VNPAY_VERSION:2.1.0}
+sepay:
+  merchant-id: SP-LIVE-NQ567933
+  secret-key: spsk_live_bUA3a6oVYEVcWttjg88SFWv651VAZwyp
+  env: production

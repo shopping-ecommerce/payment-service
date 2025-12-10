@@ -2,6 +2,7 @@ package iuh.fit.se.controller;
 
 import feign.FeignException;
 import iuh.fit.event.dto.OrderStatusChangedEvent;
+import iuh.fit.event.dto.SellerViolationEvent;
 import iuh.fit.se.dto.request.DepositRequest;
 import iuh.fit.se.dto.response.VersionResp;
 import iuh.fit.se.repository.httpclient.PolicyClient;
@@ -42,7 +43,7 @@ public class NotificationController {
                 }
             } else if ("CANCELLED".equals(event.getStatus()) && "BANK_TRANSFER".equals(event.getPaymentMethod())) {
                 walletService.deposit(event.getUserId(), DepositRequest.builder()
-                        .amount(event.getSubtotal())
+                        .amount(event.getTotalAmount())
                         .description("Hoàn tiền cho đơn hàng: #" + event.getOrderId())
                         .build());
                 log.info("Đã xử lý hoàn tiền cho đơn hàng: {}", event.getOrderId());
@@ -61,12 +62,26 @@ public class NotificationController {
                 return;
             }
             walletService.deposit(event.getUserId(), DepositRequest.builder()
-                    .amount(event.getSubtotal())
+                    .amount(event.getTotalAmount())
                     .description("Hoàn tiền cho đơn hàng: #" + event.getOrderId())
                     .build());
             log.info("Đã xử lý hoàn tiền cho đơn hàng: {}", event.getOrderId());
         } catch (Exception e) {
             log.error("Lỗi khi hoàn tiền cho đơn hàng {}: {}", event.getOrderId(), e.getMessage());
         }
+    }
+
+    @KafkaListener(topics = "seller-violations", groupId = "payment-service-group", concurrency = "1")
+    public void handleSellerViolations(SellerViolationEvent event) {
+        log.info("Nhận được sự kiện seller-violations cho orderId: {}", event.getOrderId());
+        if (!"BANK_TRANSFER".equals(event.getMethod())) {
+            log.info("Trạng thái đơn hàng không phải BANK_TRANSFER, không thực hiện hoàn tiền cho đơn hàng: {}", event.getOrderId());
+            return;
+        }
+        walletService.deposit(event.getUserId(), DepositRequest.builder()
+                .amount(event.getTotalPrice())
+                .description("Hoàn tiền cho đơn hàng: #" + event.getOrderId())
+                .build());
+        log.info("Đã xử lý hoàn tiền cho đơn hàng: {}", event.getOrderId());
     }
 }
