@@ -6,6 +6,7 @@ import iuh.fit.se.dto.request.SePayIpnPayload;
 import iuh.fit.se.dto.response.ApiResponse;
 import iuh.fit.se.dto.response.SePayCheckoutResponse;
 import iuh.fit.se.service.SePayService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
@@ -43,7 +44,7 @@ public class SePayController {
 
     // ===== CREATE THẬT: FE gửi orderCode + amount =====
     @PostMapping("/create")
-    public ApiResponse<SePayCheckoutResponse> createPayment(
+    public ApiResponse<SePayCheckoutResponse> createPayment( @Valid
             @RequestBody SePayCreatePaymentRequest request
             // @AuthenticationPrincipal CustomUserDetails userDetails  // sau này nếu muốn
     ) {
